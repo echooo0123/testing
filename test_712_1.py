@@ -39,20 +39,16 @@ def test_ctrl_enter_shortcut(driver):
 
     # 查找所有的 history-item 类元素
     history_elements = driver.find_elements(By.CLASS_NAME, 'history-item')
-    print("原来的")
-    for element in history_elements:
-        html = element.get_attribute('outerHTML')
-        print(html)
-
     # 计算 history-item 类元素的数量
     initial_history_length = len(history_elements)
 
-    # 打印初始的 history-item 类元素数量
-    print("Initial history item count:", initial_history_length)
+    
 
     # 模拟按下 Ctrl+Enter
-    action_chains.key_down(Keys.CONTROL)
-     # 模拟按下 Enter 键
+    try:
+      action_chains.key_down(Keys.COMMAND)
+    except:
+      action_chains.key_down(Keys.CONTROL)
     action_chains.key_down(Keys.ENTER)
     action_chains.perform()
 
@@ -61,21 +57,17 @@ def test_ctrl_enter_shortcut(driver):
 
     # 查找更新后的 history-item 类元素
     updated_history_elements = driver.find_elements(By.CLASS_NAME, 'history-item')
-    print("现在的")
-    for element in updated_history_elements:
-        html = element.get_attribute('outerHTML')
-        print(html)
+    
 
     # 计算更新后的 history-item 类元素的数量
     updated_history_length = len(updated_history_elements)
 
-    # 打印更新后的 history-item 类元素数量
-    print("Updated history item count:", updated_history_length)
+    
 
     # 验证元素是否存在
     try:
         driver.find_element(By.CLASS_NAME, 'command-preview')
-        updated_history_elements=initial_history_length+1
+        updated_history_length==initial_history_length+1
     except NoSuchElementException:
         pytest.fail('Command execution failed')
 
