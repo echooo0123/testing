@@ -51,7 +51,10 @@ def test_ctrl_enter_shortcut(driver):
     print("Initial history item count:", initial_history_length)
 
     # 模拟按下 Ctrl+Enter
-    action_chains.send_keys(Keys.CONTROL + Keys.ENTER).perform()
+    action_chains.key_down(Keys.CONTROL)
+     # 模拟按下 Enter 键
+    action_chains.key_down(Keys.ENTER)
+    action_chains.perform()
 
     # 等待一段时间，确保历史记录已更新
     time.sleep(10)
@@ -72,6 +75,7 @@ def test_ctrl_enter_shortcut(driver):
     # 验证元素是否存在
     try:
         driver.find_element(By.CLASS_NAME, 'command-preview')
+        updated_history_elements=initial_history_length+1
     except NoSuchElementException:
         pytest.fail('Command execution failed')
 
