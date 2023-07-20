@@ -46,16 +46,16 @@ class TestHistory(BaseCase):
         action_chains.click(codeMirror).perform()
 
         # 判断history是否有新一条显示
-        key_list = ["use test", "ls"]
-        test_list=["$ : :help","$ : use test","$ : ls"]
+        key_list = ["use test1", "ls",'ls','ls']
+        test_list=["$ : :help","$ : use test1","$ : ls",'$ : ls','$ : ls']
         count=0
         for i in range(len(key_list)):
             self.send_keys_and_enter(action_chains, key_list[i])
             time.sleep(1)
-            truncate_boxes = self.driver.find_elements(By.CSS_SELECTOR, ".history-item")  # 使用合适的选择器定位元素（注意使用复数形式的 find_elements）
+        truncate_boxes = self.driver.find_elements(By.CSS_SELECTOR, ".history-item")  # 使用合适的选择器定位元素（注意使用复数形式的 find_elements）
         for truncate_box in truncate_boxes:
             text_content = truncate_box.text
-            print(text_content)
+            #print(text_content)
             time.sleep(2)
             if test_list[count]!=text_content :
                T=False
@@ -64,21 +64,22 @@ class TestHistory(BaseCase):
         
         # 判断history的导航功能
         guiding_boxes = self.driver.find_elements(By.CSS_SELECTOR, ".history-item")
-        action_chains.click(guiding_boxes[1]).perform()
-        print(guiding_boxes[1].text)
+        action_chains.click(guiding_boxes[0]).perform()
+        print(guiding_boxes[0].text)
         time.sleep(2)
+        target_element=None
         elements = self.driver.find_elements(By.CSS_SELECTOR, ".command-preview")
         for element in elements:
             print(element.text)
             
-            if element.is_displayed():
-                print('yes')
-            else:
-                print('no')
-            '''if self.is_element_visible(element.text):
+            # if element.is_displayed():
+            #     print('yes')
+            # else:
+            #     print('no')
+            if element.text==guiding_boxes[0]:
                 print("元素可见")
             else:
-                print("元素不可见")'''
+                print("元素不可见")
         
         assert T
 
