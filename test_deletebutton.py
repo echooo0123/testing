@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-
+from shutdown import shutdown
 
 @pytest.fixture
 def driver():
@@ -20,7 +20,8 @@ def driver():
 
 
 def test_button_delete(driver):
-    driver.get('http://34.28.121.9:14240/gsql/')
+    shutdown(driver)
+    #driver.get('http://34.28.121.9:14240/gsql/')
     time.sleep(5)
     action_chains = ActionChains(driver)
     delete_boxes = driver.find_element(By.CSS_SELECTOR, '.delete-command')

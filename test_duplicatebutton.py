@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from selenium.webdriver.common.keys import Keys
 
 @pytest.fixture
 def driver():
@@ -18,35 +18,46 @@ def driver():
     driver = webdriver.Chrome(service=Service(driver_path), options=options)
     yield driver
     driver.quit()
+key_list = ["use global", "ls", "test"]
+
+def send_keys_and_enter(action_chains, keys):
+        action_chains.send_keys(keys)
+        try:
+            action_chains.key_down(Keys.COMMAND)
+        except:
+            action_chains.key_down(Keys.CONTROL)
+        action_chains.key_down(Keys.ENTER)
+        action_chains.perform()
+
+
 def test_button_duplicate(driver):
     driver.get('http://34.28.121.9:14240/gsql/')
+    time.sleep(5)
+    # 找到 CodeMirror 元素
+    codeMirror = driver.find_element(By.CSS_SELECTOR, ".CodeMirror")
 
-    # 使用WebDriverWait等待按钮加载完成并且可见
-    wait = WebDriverWait(driver, 10)
-    duplicate_boxes = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.command-copy')))
-
-    # 执行鼠标移动操作
+    # 创建动作链对象
     action_chains = ActionChains(driver)
-    action_chains.move_to_element(duplicate_boxes).perform()
 
-    # 可以继续执行其他操作，或者省略time.sleep()
+    action_chains.click(codeMirror).perform()
+    
+    # 输入指令
+    for i in range(len(key_list)):
+        send_keys_and_enter(action_chains, key_list[i])
+        time.sleep(1)
 
-    # 等待一段时间，方便观察鼠标移动效果
+    action_chains = ActionChains(driver)
+
+
+    duplicate_boxes = driver.find_elements(By.CSS_SELECTOR, ".command-copy")[1]
+    
+    
     time.sleep(5)
 
-
-
-
-# def test_button_duplicate(driver):
-#     driver.get('http://34.28.121.9:14240/gsql/')
-#     time.sleep(5)
-#     action_chains = ActionChains(driver)
-#     duplicate_boxes = driver.find_element(By.CSS_SELECTOR, '.command-copy')
-#     #action_chains.move_to_element(duplicate_boxes).perform()
-#     time.sleep(5)
-#     action_chains.click(duplicate_boxes).perform()
+    action_chains.click(duplicate_boxes).perform()
    
-#     #找到 CodeMirror 元素
-#     codeMirror = driver.find_element(By.CSS_SELECTOR, ".CodeMirror")
+    #找到 CodeMirror 元素
+    codeMirror = driver.find_element(By.CSS_SELECTOR, ".CodeMirror")
     
-#     assert codeMirror.text==":help"
+    
+    assert codeMirror.text=="use global"
